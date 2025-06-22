@@ -1,27 +1,24 @@
-# Payroll System Example
+# Lightweight Payroll and Attendance System
 
-This repository provides a tiny demonstration of a payroll and attendance system written in Python.  The goal is educational: each module is small and easy to read so that newcomers can see how a larger project might be structured.
+This repository demonstrates a **minimal** yet modular payroll system
+implemented in pure Python.  It is designed for factories with fewer
+than 50 employees and is intentionally simple so that even newcomers can
+experiment with the code.
 
-## Getting Started
+## Quick Start
 
-1. **Install Python dependencies**
-
-   Install the packages listed in `requirements.txt`:
-
+1. **Install requirements**.  The only external packages are
+   [SQLAlchemy](https://www.sqlalchemy.org/),
+   [pandas](https://pandas.pydata.org/),
+   [cryptography](https://cryptography.io/), and
+   [scikit‑learn](https://scikit-learn.org/).  Install them with:
    ```bash
-   pip install -r requirements.txt
+   pip install sqlalchemy pandas cryptography scikit-learn
    ```
-
-   If you encounter `ModuleNotFoundError: No module named 'sklearn'` during the tests or while running the code, ensure that `scikit-learn` is installed using the command above.
-
-2. **Launch the GUI**
-
-   The simplest way to try the demo is to start the Tkinter interface:
-
+2. **Launch the GUI** to add employees or attendance records:
    ```bash
    python -m payroll_system.main --gui
    ```
-
    On first launch the application creates `employee_db_2025.sqlite` in the project directory. The window allows you to enter an employee name and Aadhaar number.  Clicking **Add** stores the employee and logs the action.
 
 3. **Command line usage**
@@ -79,3 +76,6 @@ This is **not** a production-ready payroll system. It is a starting point that c
   found, rerun `pip install -r requirements.txt` to install all required
   libraries.
 
+The code is intentionally concise but provides a starting point for a
+more complete system with role based access, encrypted data, and export
+capabilities.  Feel free to experiment!  See the notebook for examples.

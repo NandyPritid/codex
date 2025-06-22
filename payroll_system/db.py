@@ -1,4 +1,3 @@
-
 """Database utilities for the payroll system.
 
 This module defines SQLAlchemy models and helper functions to manage
@@ -11,8 +10,10 @@ import json
 from datetime import datetime
 from uuid import uuid4
 from cryptography.fernet import Fernet
-from sqlalchemy import (create_engine, Column, String, Integer, Float, Boolean,
-                        DateTime, JSON, ForeignKey)
+from sqlalchemy import (
+    create_engine, Column, String, Integer, Float, Boolean,
+    DateTime, JSON, ForeignKey, Index
+)
 from sqlalchemy.orm import declarative_base, sessionmaker
 
 DB_NAME = os.environ.get('PAYROLL_DB', 'employee_db_2025.sqlite')
@@ -20,7 +21,7 @@ Base = declarative_base()
 engine = create_engine(f'sqlite:///{DB_NAME}', echo=False, future=True)
 SessionLocal = sessionmaker(bind=engine)
 
-# Simple key management for demo purposes.
+# Simple key management for demo purposes
 # ``secret.key`` is created automatically on first run so that encrypted
 # fields can be recovered on subsequent executions.
 KEY_FILE = 'secret.key'
@@ -64,8 +65,8 @@ class Attendance(Base):
     __tablename__ = 'attendance'
 
     id = Column(Integer, primary_key=True)
-    employee_id = Column(String, ForeignKey('employees.employee_id'))
-    date = Column(DateTime)
+    employee_id = Column(String, ForeignKey('employees.employee_id'), index=True)
+    date = Column(DateTime, index=True)
     salary = Column(Float)
     role = Column(String)
     is_sunday = Column(Boolean)
@@ -158,7 +159,18 @@ def add_employee(session, **kwargs):
     str
         The generated ``employee_id``.
     """
-    sensitive_fields = ['aadhar_number', 'pan_number']
+    # Basic validation for government IDs
+    aadhar = kwargs.get("aadhar_number")
+    if aadhar:
+        if not (aadhar.isdigit() and len(aadhar) == 12):
+            raise ValueError("Aadhar number must be a 12-digit number")
+
+    pan = kwargs.get("pan_number")
+    if pan:
+        if len(pan) != 10:
+            raise ValueError("PAN number must be a 10-character code")
+
+    sensitive_fields = ["aadhar_number", "pan_number"]
     for field in sensitive_fields:
         if field in kwargs and kwargs[field]:
             kwargs[field] = encrypt(kwargs[field])
@@ -187,3 +199,51 @@ def log_action(session, user_id: str, action: str, details: str = ''):
     """Record a user action in the audit log."""
     session.add(AuditLog(user_id=user_id, action=action, details=details))
     session.commit()
+
+def record_attendance(
+    session,
+    employee_id: str,
+    date: datetime,
+    salary: float,
+    role: str,
+    is_sunday: bool = False,
+    leave_type: str | None = None,
+    temporary_salary: float | None = None,
+    anomaly_flag: str | None = None,
+):
+    """Insert a new attendance entry."""
+    record = Attendance(
+        employee_id=employee_id,
+        date=date,
+        salary=salary,
+        role=role,
+        is_sunday=is_sunday,
+        leave_type=leave_type,
+        temporary_salary=temporary_salary,
+        anomaly_flag=anomaly_flag,
+    )
+    session.add(record)
+    session.commit()
+
+
+def backup_database(zip_path: str = 'backup.zip'):
+    """Create a ZIP archive containing the database and employee files."""
+    import zipfile
+
+    with zipfile.ZipFile(zip_path, 'w') as zf:
+        if os.path.exists(DB_NAME):
+            zf.write(DB_NAME)
+        if os.path.exists('employee_files'):
+            for root_dir, _, files in os.walk('employee_files'):
+                for file in files:
+                    file_path = os.path.join(root_dir, file)
+                    zf.write(file_path)
+    return zip_path
+
+
+def restore_database(zip_path: str):
+    """Restore the database and files from a ZIP archive."""
+    import zipfile
+
+    with zipfile.ZipFile(zip_path, 'r') as zf:
+        zf.extractall()

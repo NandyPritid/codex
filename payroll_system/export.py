@@ -1,3 +1,4 @@
+
 """Utility functions for exporting payroll data.
 
 Only a single helper ``export_attendance`` is provided for demonstration.

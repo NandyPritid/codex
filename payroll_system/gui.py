@@ -5,7 +5,6 @@ user to enter an employee's name and Aadhaar number.  Pressing the *Add*
 button inserts the employee into the local SQLite database and records
 the action in the audit log.
 """
-
 import tkinter as tk
 from tkinter import messagebox
 from .db import get_session, add_employee, init_db, log_action

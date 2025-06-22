@@ -4,7 +4,6 @@ In a full application this module would integrate ``panchangam`` to
 produce a detailed festival calendar.  Here we only return a small
 sample dictionary so other components can be demonstrated.
 """
-
 from datetime import datetime
 try:
     from panchangam import compute_festival_list

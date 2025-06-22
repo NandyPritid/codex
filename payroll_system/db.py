@@ -159,7 +159,18 @@ def add_employee(session, **kwargs):
     str
         The generated ``employee_id``.
     """
-    sensitive_fields = ['aadhar_number', 'pan_number']
+    # Basic validation for government IDs
+    aadhar = kwargs.get("aadhar_number")
+    if aadhar:
+        if not (aadhar.isdigit() and len(aadhar) == 12):
+            raise ValueError("Aadhar number must be a 12-digit number")
+
+    pan = kwargs.get("pan_number")
+    if pan:
+        if len(pan) != 10:
+            raise ValueError("PAN number must be a 10-character code")
+
+    sensitive_fields = ["aadhar_number", "pan_number"]
     for field in sensitive_fields:
         if field in kwargs and kwargs[field]:
             kwargs[field] = encrypt(kwargs[field])

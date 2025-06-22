@@ -1,65 +1,52 @@
-# Payroll System Example
+# Lightweight Payroll and Attendance System
 
-This repository provides a tiny demonstration of a payroll and attendance system written in Python.  The goal is educational: each module is small and easy to read so that newcomers can see how a larger project might be structured.
+This repository demonstrates a **minimal** yet modular payroll system
+implemented in pure Python.  It is designed for factories with fewer
+than 50 employees and is intentionally simple so that even newcomers can
+experiment with the code.
 
-## Getting Started
+## Quick Start
 
-1. **Install Python dependencies**
-
-   Install the packages listed in `requirements.txt`:
-
+1. **Install requirements**.  The only external packages are
+   [SQLAlchemy](https://www.sqlalchemy.org/),
+   [pandas](https://pandas.pydata.org/),
+   [cryptography](https://cryptography.io/), and
+   [scikit‑learn](https://scikit-learn.org/).  Install them with:
    ```bash
-   pip install -r requirements.txt
+   pip install sqlalchemy pandas cryptography scikit-learn
    ```
-
-   If you encounter `ModuleNotFoundError: No module named 'sklearn'` during the tests or while running the code, ensure that `scikit-learn` is installed using the command above.
-
-2. **Launch the GUI**
-
-   The simplest way to try the demo is to start the Tkinter interface:
-
+2. **Launch the GUI** to add employees or attendance records:
    ```bash
    python -m payroll_system.main --gui
    ```
+   Default credentials are:
+   * `master` / `master`
+   * `viewer` / `viewer`
+   * `att` / `att`
+3. **Command line tools**.  Run `python -m payroll_system.main --help` to
+   see options such as creating a ZIP backup or exporting attendance to
+   Excel/CSV/JSON files.
 
-   On first launch the application creates `employee_db_2025.sqlite` in the project directory. The window allows you to enter an employee name and Aadhaar number.  Clicking **Add** stores the employee and logs the action.
+## Project Layout
 
-3. **Command line usage**
-
-   You can also run the module without arguments:
-
-   ```bash
-   python -m payroll_system.main
-   ```
-
-   This prints a short help message and exits.
-
-4. **Run the unit tests**
-
-   Execute the tests with:
-
-   ```bash
-   pytest -q
-   ```
-
-   The tests require `scikit-learn`. If the package is missing, install it using the command in step 1.
-
-## Project Structure
-
-- `payroll_system/db.py` – SQLAlchemy models and helper utilities
-- `payroll_system/gui.py` – minimal Tkinter interface for adding employees
-- `payroll_system/export.py` – very small example of exporting attendance data
-- `payroll_system/festival.py` – placeholder Bengali festival calculation logic
-- `payroll_system/ml_utils.py` – lightweight machine learning helpers
-- `Payroll_Attendance_System.ipynb` – Jupyter notebook showing basic usage
-- `tests/` – simple unit tests for the ML logic
-- `test_data/` – tiny CSV samples used by the notebook
-
-This is **not** a production-ready payroll system. It is a starting point that can be extended.
+- `payroll_system/db.py` – database models and helper utilities.
+- `payroll_system/gui.py` – tiny Tkinter interface with role based login.
+- `payroll_system/export.py` – export helpers for Excel/CSV/JSON.
+- `payroll_system/festival.py` – Bengali festival calendar helpers.
+- `payroll_system/ml_utils.py` – lightweight machine learning helpers.
+- `tests/` – small unit tests to show expected behaviour.
+- `Payroll_Attendance_System.ipynb` – Jupyter notebook walkthrough.
 
 ## Troubleshooting
 
-- **Missing Tkinter** – If the GUI does not open and you see an error about `tkinter` or `Tk`, install the Tk libraries for your Python distribution (on Ubuntu: `sudo apt-get install python3-tk`).
-- **Database reset** – To start over, delete `employee_db_2025.sqlite` and run the program again to recreate it.
-- **Import errors** – Ensure you activated the correct Python environment and installed dependencies from `requirements.txt`.
+- **Missing packages** – install the requirements shown above.  If you
+  see an error like `ModuleNotFoundError: No module named 'sklearn'`,
+  make sure scikit-learn was installed successfully.
+- **Database locked** – close other programs using `employee_db_2025.sqlite`
+  before launching the GUI or running exports.
+- **Corrupt database** – you can restore from a ZIP backup created with
+  `python -m payroll_system.main --backup backup.zip`.
 
+The code is intentionally concise but provides a starting point for a
+more complete system with role based access, encrypted data, and export
+capabilities.  Feel free to experiment!  See the notebook for examples.

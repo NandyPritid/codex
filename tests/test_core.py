@@ -41,3 +41,9 @@ def test_add_employee_validation():
             aadhar_number="123456789012",
             pan_number="ABCDE123",
         )
+=======
+#def test_recommend_leave_month():
+#    hist = [5] * 12
+#    hist[2] = 1  # March least busy
+#    assert recommend_leave_month(hist) == 3
+

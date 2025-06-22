@@ -1,27 +1,24 @@
-# Payroll System Example
+# Lightweight Payroll and Attendance System
 
-This repository provides a tiny demonstration of a payroll and attendance system written in Python.  The goal is educational: each module is small and easy to read so that newcomers can see how a larger project might be structured.
+This repository demonstrates a **minimal** yet modular payroll system
+implemented in pure Python.  It is designed for factories with fewer
+than 50 employees and is intentionally simple so that even newcomers can
+experiment with the code.
 
-## Getting Started
+## Quick Start
 
-1. **Install Python dependencies**
-
-   Install the packages listed in `requirements.txt`:
-
+1. **Install requirements**.  The only external packages are
+   [SQLAlchemy](https://www.sqlalchemy.org/),
+   [pandas](https://pandas.pydata.org/),
+   [cryptography](https://cryptography.io/), and
+   [scikit‑learn](https://scikit-learn.org/).  Install them with:
    ```bash
-   pip install -r requirements.txt
+   pip install sqlalchemy pandas cryptography scikit-learn
    ```
-
-   If you encounter `ModuleNotFoundError: No module named 'sklearn'` during the tests or while running the code, ensure that `scikit-learn` is installed using the command above.
-
-2. **Launch the GUI**
-
-   The simplest way to try the demo is to start the Tkinter interface:
-
+2. **Launch the GUI** to add employees or attendance records:
    ```bash
    python -m payroll_system.main --gui
    ```
-
    On first launch the application creates `employee_db_2025.sqlite` in the project directory. The window allows you to enter an employee name and Aadhaar number.  Clicking **Add** stores the employee and logs the action.
 
 3. **Command line usage**
@@ -44,6 +41,19 @@ This repository provides a tiny demonstration of a payroll and attendance system
 
    The tests require `scikit-learn`. If the package is missing, install it using the command in step 1.
 
+## Running the Notebook
+
+The repository includes `Payroll_Attendance_System.ipynb` demonstrating
+basic operations. Launch it with Jupyter:
+
+```bash
+jupyter notebook Payroll_Attendance_System.ipynb
+```
+
+Make sure the dependencies from step&nbsp;1 are installed before opening the
+notebook. The included CSV files in `test_data/` are loaded relative to the
+repository root, so run the command above from this directory.
+
 ## Project Structure
 
 - `payroll_system/db.py` – SQLAlchemy models and helper utilities
@@ -62,4 +72,13 @@ This is **not** a production-ready payroll system. It is a starting point that c
 - **Missing Tkinter** – If the GUI does not open and you see an error about `tkinter` or `Tk`, install the Tk libraries for your Python distribution (on Ubuntu: `sudo apt-get install python3-tk`).
 - **Database reset** – To start over, delete `employee_db_2025.sqlite` and run the program again to recreate it.
 - **Import errors** – Ensure you activated the correct Python environment and installed dependencies from `requirements.txt`.
+- **Missing packages** – If a module such as `pandas` or `scikit-learn` cannot be
+  found, rerun `pip install -r requirements.txt` to install all required
+  libraries.
 
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+The code is intentionally concise but provides a starting point for a
+more complete system with role based access, encrypted data, and export
+capabilities.  Feel free to experiment!  See the notebook for examples.

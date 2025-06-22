@@ -1,5 +1,7 @@
 .DS_Store
 __pycache__/
+.pytest_cache/
+*.pyc
 *.sqlite
 secret.key
-
+*.xlsx

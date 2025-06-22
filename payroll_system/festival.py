@@ -1,5 +1,9 @@
-"""Utility functions for Bengali festival calculations."""
+"""Utility functions for Bengali festival calculations.
 
+In a full application this module would integrate ``panchangam`` to
+produce a detailed festival calendar.  Here we only return a small
+sample dictionary so other components can be demonstrated.
+"""
 from datetime import datetime
 try:
     from panchangam import compute_festival_list
@@ -9,7 +13,7 @@ except ImportError:  # fallback
 
 
 def get_festivals(year=2025):
-    """Return a dictionary of festival names to dates."""
+    """Return a dictionary mapping festival names to :class:`datetime` objects."""
     if PANCHANG_AVAILABLE:
         # This is a placeholder for actual panchangam integration
         # Real implementation would compute Bengali festivals

@@ -1,11 +1,21 @@
-"""Minimal Tkinter interface for the payroll system."""
+"""Minimal Tkinter interface for the payroll system.
 
+This module exposes :func:`run_gui`, a very small window that allows a
+user to enter an employee's name and Aadhaar number.  Pressing the *Add*
+button inserts the employee into the local SQLite database and records
+the action in the audit log.
+"""
 import tkinter as tk
 from tkinter import messagebox
 from .db import get_session, add_employee, init_db, log_action
 
 def run_gui():
-    """Launch a simple GUI for adding employees."""
+    """Launch a simple GUI for adding employees.
+
+    The window contains two entry fields (name and Aadhaar). When the
+    user clicks **Add** the employee is saved and a confirmation dialog
+    appears.
+    """
     init_db()
     root = tk.Tk()
     root.title('Payroll System')
@@ -19,6 +29,7 @@ def run_gui():
     aadhar_var.grid(row=1, column=1)
 
     def submit():
+        """Callback for the Add button."""
         with get_session() as session:
             emp_id = add_employee(session, name=name_var.get(), aadhar_number=aadhar_var.get())
             log_action(session, 'admin', f'Add Employee {emp_id}')

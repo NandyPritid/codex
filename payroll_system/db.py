@@ -1,3 +1,4 @@
+
 """Database utilities for the payroll system.
 
 This module defines SQLAlchemy models and helper functions to manage
@@ -10,10 +11,8 @@ import json
 from datetime import datetime
 from uuid import uuid4
 from cryptography.fernet import Fernet
-from sqlalchemy import (
-    create_engine, Column, String, Integer, Float, Boolean,
-    DateTime, JSON, ForeignKey
-)
+from sqlalchemy import (create_engine, Column, String, Integer, Float, Boolean,
+                        DateTime, JSON, ForeignKey)
 from sqlalchemy.orm import declarative_base, sessionmaker
 
 DB_NAME = os.environ.get('PAYROLL_DB', 'employee_db_2025.sqlite')
@@ -33,12 +32,10 @@ def load_key():
 
 fernet = Fernet(load_key())
 
-
 class Employee(Base):
     """Employee details stored in the database."""
 
     __tablename__ = 'employees'
-
     employee_id = Column(String, primary_key=True, default=lambda: str(uuid4()))
     name = Column(String)
     address = Column(String)
@@ -58,7 +55,6 @@ class Employee(Base):
     consent_given = Column(Boolean, default=False)
     custom_fields = Column(JSON, default={})
 
-
 class Attendance(Base):
     """Daily attendance records."""
 
@@ -74,7 +70,6 @@ class Attendance(Base):
     temporary_salary = Column(Float)
     anomaly_flag = Column(String)
 
-
 class DeletedEmployee(Base):
     """Tracks deleted employees for audit purposes."""
 
@@ -88,7 +83,6 @@ class DeletedEmployee(Base):
     deletion_details = Column(String)
     deleted_by = Column(String)
 
-
 class AuditLog(Base):
     """Record of all actions performed in the GUI or CLI."""
 
@@ -100,7 +94,6 @@ class AuditLog(Base):
     timestamp = Column(DateTime, default=datetime.utcnow)
     details = Column(String)
 
-
 class Metadata(Base):
     """Schema versioning information."""
 
@@ -108,7 +101,6 @@ class Metadata(Base):
 
     version_id = Column(String, primary_key=True)
     last_updated = Column(DateTime)
-
 
 # --- Helper functions ----------------------------------------------------
 

@@ -2,7 +2,6 @@
 
 from sklearn.ensemble import IsolationForest
 
-
 def detect_anomalies(data):
     """Identify outliers in a numeric sequence."""
     if len(data) < 5:

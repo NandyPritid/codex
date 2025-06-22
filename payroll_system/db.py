@@ -8,6 +8,7 @@ encrypted with Fernet for demonstration purposes.
 
 import os
 import json
+from zipfile import ZipFile
 from datetime import datetime
 from uuid import uuid4
 from cryptography.fernet import Fernet
@@ -187,3 +188,33 @@ def log_action(session, user_id: str, action: str, details: str = ''):
     """Record a user action in the audit log."""
     session.add(AuditLog(user_id=user_id, action=action, details=details))
     session.commit()
+
+
+def restore_database(zip_path: str, work_dir: str = '.') -> str:
+    """Restore the application database from a ZIP archive.
+
+    WARNING: use this only with trusted ZIP files. Malicious archives can
+    overwrite arbitrary files.
+
+    Parameters
+    ----------
+    zip_path : str
+        Path to the ZIP archive containing the database backup.
+    work_dir : str, optional
+        Directory into which the contents will be extracted. Defaults to the
+        current working directory.
+
+    Returns
+    -------
+    str
+        The path to the restored database file.
+    """
+    extract_base = os.path.realpath(work_dir)
+    with ZipFile(zip_path, 'r') as zf:
+        for member in zf.namelist():
+            dest = os.path.realpath(os.path.join(extract_base, member))
+            if not dest.startswith(extract_base + os.sep):
+                raise ValueError(f"Unsafe path detected in archive: {member}")
+        zf.extractall(extract_base)
+    return os.path.join(extract_base, DB_NAME)
+

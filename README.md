@@ -76,6 +76,9 @@ This is **not** a production-ready payroll system. It is a starting point that c
   found, rerun `pip install -r requirements.txt` to install all required
   libraries.
 
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 The code is intentionally concise but provides a starting point for a
 more complete system with role based access, encrypted data, and export
 capabilities.  Feel free to experiment!  See the notebook for examples.

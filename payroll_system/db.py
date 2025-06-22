@@ -254,17 +254,16 @@ def restore_database(zip_path: str, work_dir: str = '.') -> str:
 #    session.add(record)
 #    session.commit()
 
+def backup_database(zip_path: str = 'backup.zip'):
+    """Create a ZIP archive containing the database and employee files."""
+    import zipfile
 
-#def backup_database(zip_path: str = 'backup.zip'):
-#    """Create a ZIP archive containing the database and employee files."""
-#    import zipfile
-
-#    with zipfile.ZipFile(zip_path, 'w') as zf:
-#        if os.path.exists(DB_NAME):
-#            zf.write(DB_NAME)
-#        if os.path.exists('employee_files'):
-#            for root_dir, _, files in os.walk('employee_files'):
-#                for file in files:
-#                    file_path = os.path.join(root_dir, file)
-#                    zf.write(file_path)
-#    return zip_path
+    with zipfile.ZipFile(zip_path, 'w') as zf:
+        if os.path.exists(DB_NAME):
+            zf.write(DB_NAME)
+        if os.path.exists('employee_files'):
+            for root_dir, _, files in os.walk('employee_files'):
+                for file in files:
+                    file_path = os.path.join(root_dir, file)
+                    zf.write(file_path)
+    return zip_path

@@ -9,6 +9,29 @@ import tkinter as tk
 from tkinter import messagebox
 from .db import get_session, add_employee, init_db, log_action
 
+
+def attempt_login(username: str, password: str) -> bool:
+    """Validate user credentials.
+
+    This placeholder implementation simply returns ``True`` for any input.
+    In a real application it would verify the provided username and
+    password against a user database.
+
+    Parameters
+    ----------
+    username:
+        Name of the user attempting to authenticate.
+    password:
+        Password provided by the user.
+
+    Returns
+    -------
+    bool
+        ``True`` if the credentials are accepted, ``False`` otherwise.
+    """
+
+    return True
+
 def run_gui():
     """Launch a simple GUI for adding employees.
 
@@ -29,7 +52,12 @@ def run_gui():
     aadhar_var.grid(row=1, column=1)
 
     def submit():
-        """Callback for the Add button."""
+        """Save a new employee record and display confirmation.
+
+        This callback is invoked when the **Add** button is pressed. It
+        writes the entered name and Aadhar number to the database and
+        logs the action, then pops up a small confirmation window.
+        """
         with get_session() as session:
             emp_id = add_employee(session, name=name_var.get(), aadhar_number=aadhar_var.get())
             log_action(session, 'admin', f'Add Employee {emp_id}')

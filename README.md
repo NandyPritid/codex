@@ -44,6 +44,19 @@ This repository provides a tiny demonstration of a payroll and attendance system
 
    The tests require `scikit-learn`. If the package is missing, install it using the command in step 1.
 
+## Running the Notebook
+
+The repository includes `Payroll_Attendance_System.ipynb` demonstrating
+basic operations. Launch it with Jupyter:
+
+```bash
+jupyter notebook Payroll_Attendance_System.ipynb
+```
+
+Make sure the dependencies from step&nbsp;1 are installed before opening the
+notebook. The included CSV files in `test_data/` are loaded relative to the
+repository root, so run the command above from this directory.
+
 ## Project Structure
 
 - `payroll_system/db.py` – SQLAlchemy models and helper utilities
@@ -62,4 +75,7 @@ This is **not** a production-ready payroll system. It is a starting point that c
 - **Missing Tkinter** – If the GUI does not open and you see an error about `tkinter` or `Tk`, install the Tk libraries for your Python distribution (on Ubuntu: `sudo apt-get install python3-tk`).
 - **Database reset** – To start over, delete `employee_db_2025.sqlite` and run the program again to recreate it.
 - **Import errors** – Ensure you activated the correct Python environment and installed dependencies from `requirements.txt`.
+- **Missing packages** – If a module such as `pandas` or `scikit-learn` cannot be
+  found, rerun `pip install -r requirements.txt` to install all required
+  libraries.
 

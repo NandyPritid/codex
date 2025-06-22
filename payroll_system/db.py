@@ -22,6 +22,8 @@ engine = create_engine(f'sqlite:///{DB_NAME}', echo=False, future=True)
 SessionLocal = sessionmaker(bind=engine)
 
 # Simple key management for demo purposes
+# ``secret.key`` is created automatically on first run so that encrypted
+# fields can be recovered on subsequent executions.
 KEY_FILE = 'secret.key'
 if not os.path.exists(KEY_FILE):
     with open(KEY_FILE, 'wb') as f:
@@ -32,7 +34,6 @@ def load_key():
     return open(KEY_FILE, 'rb').read()
 
 fernet = Fernet(load_key())
-
 
 class Employee(Base):
     """Employee details stored in the database."""
@@ -58,7 +59,6 @@ class Employee(Base):
     consent_given = Column(Boolean, default=False)
     custom_fields = Column(JSON, default={})
 
-
 class Attendance(Base):
     """Daily attendance records."""
 
@@ -74,7 +74,6 @@ class Attendance(Base):
     temporary_salary = Column(Float)
     anomaly_flag = Column(String)
 
-
 class DeletedEmployee(Base):
     """Tracks deleted employees for audit purposes."""
 
@@ -88,7 +87,6 @@ class DeletedEmployee(Base):
     deletion_details = Column(String)
     deleted_by = Column(String)
 
-
 class AuditLog(Base):
     """Record of all actions performed in the GUI or CLI."""
 
@@ -100,7 +98,6 @@ class AuditLog(Base):
     timestamp = Column(DateTime, default=datetime.utcnow)
     details = Column(String)
 
-
 class Metadata(Base):
     """Schema versioning information."""
 
@@ -109,11 +106,21 @@ class Metadata(Base):
     version_id = Column(String, primary_key=True)
     last_updated = Column(DateTime)
 
-
 # --- Helper functions ----------------------------------------------------
 
 def encrypt(value: str) -> str:
-    """Encrypt a string value for secure storage."""
+    """Encrypt a string value for secure storage.
+
+    Parameters
+    ----------
+    value : str
+        Plain text to encrypt.
+
+    Returns
+    -------
+    str
+        Encrypted representation or ``None`` if ``value`` is ``None``.
+    """
     if value is None:
         return None
     return fernet.encrypt(value.encode()).decode()
@@ -138,7 +145,20 @@ def init_db():
 
 
 def add_employee(session, **kwargs):
-    """Insert a new employee record and return its UUID."""
+    """Insert a new employee record and return its UUID.
+
+    Parameters
+    ----------
+    session : Session
+        SQLAlchemy session in which the employee will be created.
+    **kwargs : dict
+        Fields matching :class:`Employee` columns.
+
+    Returns
+    -------
+    str
+        The generated ``employee_id``.
+    """
     sensitive_fields = ['aadhar_number', 'pan_number']
     for field in sensitive_fields:
         if field in kwargs and kwargs[field]:
@@ -168,7 +188,6 @@ def log_action(session, user_id: str, action: str, details: str = ''):
     """Record a user action in the audit log."""
     session.add(AuditLog(user_id=user_id, action=action, details=details))
     session.commit()
-
 
 def record_attendance(
     session,

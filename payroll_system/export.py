@@ -10,7 +10,6 @@ from datetime import datetime
 from pathlib import Path
 from .db import SessionLocal, Attendance, Employee
 
-
 def export_attendance(start_date, end_date, filename='attendance.xlsx') -> str:
     """Export attendance records to an Excel file.
 
@@ -20,11 +19,12 @@ def export_attendance(start_date, end_date, filename='attendance.xlsx') -> str:
         Boundaries for the export.
     filename : str, optional
         Destination path. The suffix determines the output format.
-
+        Path of the resulting Excel file.
     Returns
     -------
     str
         Path to the written file.
+        The filename that was written.
     """
     with SessionLocal() as session:
         records = session.query(Attendance).filter(

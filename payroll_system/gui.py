@@ -1,5 +1,4 @@
 """Minimal Tkinter interface for the payroll system.
-
 The GUI is deliberately lightweight so that newcomers can run it
 without extensive setup. It demonstrates how to log in with a role and
 add a very small amount of employee data.
@@ -52,7 +51,6 @@ def open_main(role: str):
     """Open the main window after successful login."""
     root = tk.Tk()
     root.title(f'Payroll System ({role})')
-
     tk.Label(root, text='Name').grid(row=0, column=0)
     name_var = tk.Entry(root)
     name_var.grid(row=0, column=1)
@@ -65,6 +63,7 @@ def open_main(role: str):
         if role == 'View-Only':
             messagebox.showwarning('Read only', 'You do not have permission to add employees.')
             return
+        """Callback for the Add button."""
         with get_session() as session:
             emp_id = add_employee(session, name=name_var.get(), aadhar_number=aadhar_var.get())
             log_action(session, role, f'Add Employee {emp_id}')

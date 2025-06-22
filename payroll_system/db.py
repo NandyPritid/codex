@@ -1,3 +1,11 @@
+
+"""Database utilities for the payroll system.
+
+This module defines SQLAlchemy models and helper functions to manage
+employee records in a local SQLite database. Sensitive fields are
+encrypted with Fernet for demonstration purposes.
+"""
+
 import os
 import json
 from datetime import datetime
@@ -19,11 +27,14 @@ if not os.path.exists(KEY_FILE):
         f.write(Fernet.generate_key())
 
 def load_key():
+    """Load the encryption key used for protecting sensitive fields."""
     return open(KEY_FILE, 'rb').read()
 
 fernet = Fernet(load_key())
 
 class Employee(Base):
+    """Employee details stored in the database."""
+
     __tablename__ = 'employees'
     employee_id = Column(String, primary_key=True, default=lambda: str(uuid4()))
     name = Column(String)
@@ -45,7 +56,10 @@ class Employee(Base):
     custom_fields = Column(JSON, default={})
 
 class Attendance(Base):
+    """Daily attendance records."""
+
     __tablename__ = 'attendance'
+
     id = Column(Integer, primary_key=True)
     employee_id = Column(String, ForeignKey('employees.employee_id'))
     date = Column(DateTime)
@@ -57,7 +71,10 @@ class Attendance(Base):
     anomaly_flag = Column(String)
 
 class DeletedEmployee(Base):
+    """Tracks deleted employees for audit purposes."""
+
     __tablename__ = 'deleted_employees'
+
     id = Column(Integer, primary_key=True)
     employee_id = Column(String)
     name = Column(String)
@@ -67,7 +84,10 @@ class DeletedEmployee(Base):
     deleted_by = Column(String)
 
 class AuditLog(Base):
+    """Record of all actions performed in the GUI or CLI."""
+
     __tablename__ = 'audit_log'
+
     action_id = Column(String, primary_key=True, default=lambda: str(uuid4()))
     user_id = Column(String)
     action = Column(String)
@@ -75,32 +95,42 @@ class AuditLog(Base):
     details = Column(String)
 
 class Metadata(Base):
+    """Schema versioning information."""
+
     __tablename__ = 'metadata'
+
     version_id = Column(String, primary_key=True)
     last_updated = Column(DateTime)
 
+# --- Helper functions ----------------------------------------------------
 
 def encrypt(value: str) -> str:
+    """Encrypt a string value for secure storage."""
     if value is None:
         return None
     return fernet.encrypt(value.encode()).decode()
 
 
 def decrypt(value: str) -> str:
+    """Decrypt a previously encrypted string."""
     if value is None:
         return None
     return fernet.decrypt(value.encode()).decode()
 
 
 def init_db():
+    """Create database tables and insert initial metadata if missing."""
     Base.metadata.create_all(engine)
     with SessionLocal() as session:
         if not session.query(Metadata).first():
-            session.add(Metadata(version_id='1.0', last_updated=datetime.utcnow()))
+            session.add(
+                Metadata(version_id='1.0', last_updated=datetime.utcnow())
+            )
             session.commit()
 
 
 def add_employee(session, **kwargs):
+    """Insert a new employee record and return its UUID."""
     sensitive_fields = ['aadhar_number', 'pan_number']
     for field in sensitive_fields:
         if field in kwargs and kwargs[field]:
@@ -111,12 +141,13 @@ def add_employee(session, **kwargs):
     return employee.employee_id
 
 
-
 def get_session():
+    """Create and return a new SQLAlchemy session."""
     return SessionLocal()
 
 
 def get_employee(session, employee_id):
+    """Fetch a single employee, decrypting sensitive fields."""
     emp = session.query(Employee).filter_by(employee_id=employee_id).first()
     if emp and emp.aadhar_number:
         emp.aadhar_number = decrypt(emp.aadhar_number)
@@ -126,6 +157,6 @@ def get_employee(session, employee_id):
 
 
 def log_action(session, user_id: str, action: str, details: str = ''):
+    """Record a user action in the audit log."""
     session.add(AuditLog(user_id=user_id, action=action, details=details))
     session.commit()
-

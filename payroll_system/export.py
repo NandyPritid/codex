@@ -1,9 +1,13 @@
+
+"""Utility functions for exporting payroll data."""
+
 import pandas as pd
 from datetime import datetime
 from .db import SessionLocal, Attendance, Employee
 
 
 def export_attendance(start_date, end_date, filename='attendance.xlsx'):
+    """Export attendance records to an Excel file."""
     with SessionLocal() as session:
         records = session.query(Attendance).filter(
             Attendance.date >= start_date,

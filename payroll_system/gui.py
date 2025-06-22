@@ -1,9 +1,11 @@
+"""Minimal Tkinter interface for the payroll system."""
+
 import tkinter as tk
 from tkinter import messagebox
 from .db import get_session, add_employee, init_db, log_action
 
-
 def run_gui():
+    """Launch a simple GUI for adding employees."""
     init_db()
     root = tk.Tk()
     root.title('Payroll System')

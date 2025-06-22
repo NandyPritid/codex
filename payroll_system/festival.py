@@ -1,3 +1,5 @@
+"""Utility functions for Bengali festival calculations."""
+
 from datetime import datetime
 try:
     from panchangam import compute_festival_list
@@ -7,6 +9,7 @@ except ImportError:  # fallback
 
 
 def get_festivals(year=2025):
+    """Return a dictionary of festival names to dates."""
     if PANCHANG_AVAILABLE:
         # This is a placeholder for actual panchangam integration
         # Real implementation would compute Bengali festivals

@@ -1,28 +1,29 @@
-
 """Utility functions for exporting payroll data.
 
-Only a single helper ``export_attendance`` is provided for demonstration.
-It writes queried attendance records to an Excel file using ``pandas``.
+These helpers demonstrate how the database contents can be exported to
+Excel, CSV, or JSON files so that non-technical users can back up or
+analyze the information in common tools like LibreOffice or Excel.
 """
 
 import pandas as pd
 from datetime import datetime
+from pathlib import Path
 from .db import SessionLocal, Attendance, Employee
 
-
-def export_attendance(start_date, end_date, filename='attendance.xlsx'):
+def export_attendance(start_date, end_date, filename='attendance.xlsx') -> str:
     """Export attendance records to an Excel file.
 
     Parameters
     ----------
     start_date, end_date : datetime
-        Boundaries for the exported records.
+        Boundaries for the export.
     filename : str, optional
+        Destination path. The suffix determines the output format.
         Path of the resulting Excel file.
-
     Returns
     -------
     str
+        Path to the written file.
         The filename that was written.
     """
     with SessionLocal() as session:
@@ -43,5 +44,11 @@ def export_attendance(start_date, end_date, filename='attendance.xlsx'):
             for r in records
         ]
     df = pd.DataFrame(data)
-    df.to_excel(filename, index=False)
-    return filename
+    path = Path(filename)
+    if path.suffix == '.csv':
+        df.to_csv(path, index=False)
+    elif path.suffix == '.json':
+        df.to_json(path, orient='records')
+    else:
+        df.to_excel(path, index=False)
+    return str(path)

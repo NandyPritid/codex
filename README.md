@@ -63,3 +63,7 @@ This is **not** a production-ready payroll system. It is a starting point that c
 - **Database reset** – To start over, delete `employee_db_2025.sqlite` and run the program again to recreate it.
 - **Import errors** – Ensure you activated the correct Python environment and installed dependencies from `requirements.txt`.
 
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.

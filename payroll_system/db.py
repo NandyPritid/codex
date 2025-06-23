@@ -229,30 +229,30 @@ def restore_database(zip_path: str, work_dir: str = '.') -> str:
         zf.extractall(extract_base)
     return os.path.join(extract_base, DB_NAME)
 
-#def record_attendance(
-#    session,
-#    employee_id: str,
-#    date: datetime,
-#    salary: float,
-#    role: str,
-#    is_sunday: bool = False,
-#    leave_type: str | None = None,
-#    temporary_salary: float | None = None,
-#    anomaly_flag: str | None = None,
-#):
-#    """Insert a new attendance entry."""
-#    record = Attendance(
-#        employee_id=employee_id,
-#        date=date,
-#        salary=salary,
-#        role=role,
-#        is_sunday=is_sunday,
-#        leave_type=leave_type,
-#        temporary_salary=temporary_salary,
-#        anomaly_flag=anomaly_flag,
-#    )
-#    session.add(record)
-#    session.commit()
+def record_attendance(
+    session,
+    employee_id: str,
+    date: datetime,
+    salary: float,
+    role: str,
+    is_sunday: bool = False,
+    leave_type: str | None = None,
+    temporary_salary: float | None = None,
+    anomaly_flag: str | None = None,
+):
+    """Insert a new attendance entry."""
+    record = Attendance(
+        employee_id=employee_id,
+        date=date,
+        salary=salary,
+        role=role,
+        is_sunday=is_sunday,
+        leave_type=leave_type,
+        temporary_salary=temporary_salary,
+        anomaly_flag=anomaly_flag,
+    )
+    session.add(record)
+    session.commit()
 
 def backup_database(zip_path: str = 'backup.zip'):
     """Create a ZIP archive containing the database and employee files."""

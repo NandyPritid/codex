@@ -63,3 +63,10 @@ After logging in you will see three tabs:
 These examples are deliberately minimal so that even beginners can
 follow the flow. Feel free to inspect the Jupyter notebook for a step by
 step explanation.
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+The code is intentionally concise but provides a starting point for a
+more complete system with role based access, encrypted data, and export
+capabilities.  Feel free to experiment!  See the notebook for examples.

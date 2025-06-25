@@ -7,6 +7,7 @@ encrypted with Fernet for demonstration purposes.
 
 import os
 import json
+from zipfile import ZipFile
 from datetime import datetime
 from uuid import uuid4
 from cryptography.fernet import Fernet
@@ -22,6 +23,8 @@ engine = create_engine(f'sqlite:///{DB_NAME}', echo=False, future=True)
 SessionLocal = sessionmaker(bind=engine)
 
 # Simple key management for demo purposes
+# ``secret.key`` is created automatically on first run so that encrypted
+# fields can be recovered on subsequent executions.
 KEY_FILE = 'secret.key'
 if not os.path.exists(KEY_FILE):
     with open(KEY_FILE, 'wb') as f:
@@ -113,7 +116,18 @@ class Metadata(Base):
 # --- Helper functions ----------------------------------------------------
 
 def encrypt(value: str) -> str:
-    """Encrypt a string value for secure storage."""
+    """Encrypt a string value for secure storage.
+
+    Parameters
+    ----------
+    value : str
+        Plain text to encrypt.
+
+    Returns
+    -------
+    str
+        Encrypted representation or ``None`` if ``value`` is ``None``.
+    """
     if value is None:
         return None
     return fernet.encrypt(value.encode()).decode()
@@ -140,6 +154,31 @@ def init_db():
 def add_employee(session, **kwargs):
     """Insert a new employee record and return its UUID."""
     sensitive_fields = ['aadhar_number', 'pan_number']
+    """Insert a new employee record and return its UUID.
+
+    Parameters
+    ----------
+    session : Session
+        SQLAlchemy session in which the employee will be created.
+    **kwargs : dict
+        Fields matching :class:`Employee` columns.
+
+    Returns
+    -------
+    str
+        The generated ``employee_id``.
+    """
+    # Basic validation for government IDs
+    aadhar = kwargs.get("aadhar_number")
+    if aadhar:
+        if not (aadhar.isdigit() and len(aadhar) == 12):
+            raise ValueError("Aadhar number must be a 12-digit number")
+
+    pan = kwargs.get("pan_number")
+    if pan:
+        if len(pan) != 10:
+            raise ValueError("PAN number must be a 10-character code")
+
     for field in sensitive_fields:
         if field in kwargs and kwargs[field]:
             kwargs[field] = encrypt(kwargs[field])
@@ -169,6 +208,33 @@ def log_action(session, user_id: str, action: str, details: str = ''):
     session.add(AuditLog(user_id=user_id, action=action, details=details))
     session.commit()
 
+def restore_database(zip_path: str, work_dir: str = '.') -> str:
+    """Restore the application database from a ZIP archive.
+
+    WARNING: use this only with trusted ZIP files. Malicious archives can
+    overwrite arbitrary files.
+
+    Parameters
+    ----------
+    zip_path : str
+        Path to the ZIP archive containing the database backup.
+    work_dir : str, optional
+        Directory into which the contents will be extracted. Defaults to the
+        current working directory.
+
+    Returns
+    -------
+    str
+        The path to the restored database file.
+    """
+    extract_base = os.path.realpath(work_dir)
+    with ZipFile(zip_path, 'r') as zf:
+        for member in zf.namelist():
+            dest = os.path.realpath(os.path.join(extract_base, member))
+            if not dest.startswith(extract_base + os.sep):
+                raise ValueError(f"Unsafe path detected in archive: {member}")
+        zf.extractall(extract_base)
+    return os.path.join(extract_base, DB_NAME)
 
 def record_attendance(
     session,
@@ -195,7 +261,6 @@ def record_attendance(
     session.add(record)
     session.commit()
 
-
 def backup_database(zip_path: str = 'backup.zip'):
     """Create a ZIP archive containing the database and employee files."""
     import zipfile
@@ -210,10 +275,9 @@ def backup_database(zip_path: str = 'backup.zip'):
                     zf.write(file_path)
     return zip_path
 
+#def restore_database(zip_path: str):
+#    """Restore the database and files from a ZIP archive."""
+#    import zipfile
 
-def restore_database(zip_path: str):
-    """Restore the database and files from a ZIP archive."""
-    import zipfile
-
-    with zipfile.ZipFile(zip_path, 'r') as zf:
-        zf.extractall()
+#    with zipfile.ZipFile(zip_path, 'r') as zf:
+#        zf.extractall()

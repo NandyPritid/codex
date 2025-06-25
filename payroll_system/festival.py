@@ -6,6 +6,7 @@ festival names mapped to ``datetime`` objects.  If the optional
 ``test_data/festivals.csv`` where newcomers can manually edit festival
 dates without touching the code.
 """
+"""Utility functions for Bengali festival calculations."""
 
 from datetime import datetime
 from pathlib import Path
@@ -60,5 +61,4 @@ def get_festivals(year: int = 2025) -> dict:
                 festivals = {row["name"]: datetime.fromisoformat(row["date"]) for row in reader}
         else:
             festivals = {name: date.replace(year=year) for name, date in DEFAULT_FESTIVALS.items()}
-
     return festivals

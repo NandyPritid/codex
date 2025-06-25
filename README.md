@@ -19,62 +19,50 @@ experiment with the code.
    ```bash
    python -m payroll_system.main --gui
    ```
-   On first launch the application creates `employee_db_2025.sqlite` in the project directory. The window allows you to enter an employee name and Aadhaar number.  Clicking **Add** stores the employee and logs the action.
+   Default credentials are:
+   * `master` / `master`
+   * `viewer` / `viewer`
+   * `att` / `att`
+3. **Command line tools**.  Run `python -m payroll_system.main --help` to
+   see options such as creating a ZIP backup or exporting attendance to
+   Excel/CSV/JSON files.
 
-3. **Command line usage**
+## Project Layout
 
-   You can also run the module without arguments:
-
-   ```bash
-   python -m payroll_system.main
-   ```
-
-   This prints a short help message and exits.
-
-4. **Run the unit tests**
-
-   Execute the tests with:
-
-   ```bash
-   pytest -q
-   ```
-
-   The tests require `scikit-learn`. If the package is missing, install it using the command in step 1.
-
-## Running the Notebook
-
-The repository includes `Payroll_Attendance_System.ipynb` demonstrating
-basic operations. Launch it with Jupyter:
-
-```bash
-jupyter notebook Payroll_Attendance_System.ipynb
-```
-
-Make sure the dependencies from step&nbsp;1 are installed before opening the
-notebook. The included CSV files in `test_data/` are loaded relative to the
-repository root, so run the command above from this directory.
-
-## Project Structure
-
-- `payroll_system/db.py` – SQLAlchemy models and helper utilities
-- `payroll_system/gui.py` – minimal Tkinter interface for adding employees
-- `payroll_system/export.py` – very small example of exporting attendance data
-- `payroll_system/festival.py` – placeholder Bengali festival calculation logic
-- `payroll_system/ml_utils.py` – lightweight machine learning helpers
-- `Payroll_Attendance_System.ipynb` – Jupyter notebook showing basic usage
-- `tests/` – simple unit tests for the ML logic
-- `test_data/` – tiny CSV samples used by the notebook
-
-This is **not** a production-ready payroll system. It is a starting point that can be extended.
+- `payroll_system/db.py` – database models and helper utilities.
+- `payroll_system/gui.py` – tiny Tkinter interface with role based login.
+- `payroll_system/export.py` – export helpers for Excel/CSV/JSON.
+- `payroll_system/festival.py` – Bengali festival calendar helpers.
+- `payroll_system/ml_utils.py` – lightweight machine learning helpers.
+- `tests/` – small unit tests to show expected behaviour.
+- `Payroll_Attendance_System.ipynb` – Jupyter notebook walkthrough.
 
 ## Troubleshooting
 
-- **Missing Tkinter** – If the GUI does not open and you see an error about `tkinter` or `Tk`, install the Tk libraries for your Python distribution (on Ubuntu: `sudo apt-get install python3-tk`).
-- **Database reset** – To start over, delete `employee_db_2025.sqlite` and run the program again to recreate it.
-- **Import errors** – Ensure you activated the correct Python environment and installed dependencies from `requirements.txt`.
-- **Missing packages** – If a module such as `pandas` or `scikit-learn` cannot be
-  found, rerun `pip install -r requirements.txt` to install all required
-  libraries.
+- **Missing packages** – install the requirements shown above.  If you
+  see an error like `ModuleNotFoundError: No module named 'sklearn'`,
+  make sure scikit-learn was installed successfully.
+- **Database locked** – close other programs using `employee_db_2025.sqlite`
+  before launching the GUI or running exports.
+- **Corrupt database** – you can restore from a ZIP backup created with
+  `python -m payroll_system.main --backup backup.zip`.
+
+The code is intentionally concise but provides a starting point for a
+more complete system with role based access, encrypted data, and export
+capabilities.
+
+### Using the GUI
+
+After logging in you will see three tabs:
+
+1. **Employee** – enter name, Aadhar, PAN, contact number and hire date.
+2. **Attendance** – record daily salary and role with optional leave type.
+3. **Festivals** – view important Bengali holidays loaded from
+   `test_data/festivals.csv`.
+
+These examples are deliberately minimal so that even beginners can
+follow the flow. Feel free to inspect the Jupyter notebook for a step by
+step explanation.
 
 ## License
 

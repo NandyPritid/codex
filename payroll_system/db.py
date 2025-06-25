@@ -36,6 +36,7 @@ def load_key():
 
 fernet = Fernet(load_key())
 
+
 class Employee(Base):
     """Employee details stored in the database."""
 
@@ -60,6 +61,7 @@ class Employee(Base):
     consent_given = Column(Boolean, default=False)
     custom_fields = Column(JSON, default={})
 
+
 class Attendance(Base):
     """Daily attendance records."""
 
@@ -75,6 +77,7 @@ class Attendance(Base):
     temporary_salary = Column(Float)
     anomaly_flag = Column(String)
 
+
 class DeletedEmployee(Base):
     """Tracks deleted employees for audit purposes."""
 
@@ -88,6 +91,7 @@ class DeletedEmployee(Base):
     deletion_details = Column(String)
     deleted_by = Column(String)
 
+
 class AuditLog(Base):
     """Record of all actions performed in the GUI or CLI."""
 
@@ -99,6 +103,7 @@ class AuditLog(Base):
     timestamp = Column(DateTime, default=datetime.utcnow)
     details = Column(String)
 
+
 class Metadata(Base):
     """Schema versioning information."""
 
@@ -106,6 +111,7 @@ class Metadata(Base):
 
     version_id = Column(String, primary_key=True)
     last_updated = Column(DateTime)
+
 
 # --- Helper functions ----------------------------------------------------
 
@@ -146,6 +152,8 @@ def init_db():
 
 
 def add_employee(session, **kwargs):
+    """Insert a new employee record and return its UUID."""
+    sensitive_fields = ['aadhar_number', 'pan_number']
     """Insert a new employee record and return its UUID.
 
     Parameters
@@ -171,7 +179,6 @@ def add_employee(session, **kwargs):
         if len(pan) != 10:
             raise ValueError("PAN number must be a 10-character code")
 
-    sensitive_fields = ["aadhar_number", "pan_number"]
     for field in sensitive_fields:
         if field in kwargs and kwargs[field]:
             kwargs[field] = encrypt(kwargs[field])
@@ -267,3 +274,10 @@ def backup_database(zip_path: str = 'backup.zip'):
                     file_path = os.path.join(root_dir, file)
                     zf.write(file_path)
     return zip_path
+
+#def restore_database(zip_path: str):
+#    """Restore the database and files from a ZIP archive."""
+#    import zipfile
+
+#    with zipfile.ZipFile(zip_path, 'r') as zf:
+#        zf.extractall()

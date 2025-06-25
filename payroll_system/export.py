@@ -10,6 +10,7 @@ from datetime import datetime
 from pathlib import Path
 from .db import SessionLocal, Attendance, Employee
 
+
 def export_attendance(start_date, end_date, filename='attendance.xlsx') -> str:
     """Export attendance records to an Excel file.
 

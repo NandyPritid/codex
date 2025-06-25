@@ -1,4 +1,5 @@
 """Command line utilities for the payroll system.
+
 The command line is intentionally simple so that users can quickly
 perform common actions like launching the GUI or exporting data without
 remembering many options.

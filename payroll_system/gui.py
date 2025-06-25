@@ -19,29 +19,6 @@ from .db import (
 from .festival import get_festivals
 
 
-
-#def attempt_login(username: str, password: str) -> bool:
-    """Validate user credentials.
-
-    This placeholder implementation simply returns ``True`` for any input.
-    In a real application it would verify the provided username and
-    password against a user database.
-
-    Parameters
-    ----------
-    username:
-        Name of the user attempting to authenticate.
-    password:
-        Password provided by the user.
-
-    Returns
-    -------
-    bool
-        ``True`` if the credentials are accepted, ``False`` otherwise.
-    """
-
-#    return True
-
 def run_gui():
     """Launch a simple GUI for adding employees with login."""
     init_db()
